@@ -10,12 +10,12 @@ const Player = () => {
 
   const mockSong = {
     title: "Mock Song",
-    artist: "DJ GPT",
+    artist: "DJ Latino",
     duration: 180, // seconds
   };
 
   return (
-    <div className="w-full max-w-md bg-gray-800 p-6 rounded-xl shadow-lg text-white flex flex-col gap-4">
+    <div className="w-full max-w-md p-6 rounded-xl text-white flex flex-col gap-4">
       <div className="flex justify-center">
         <PlayButton
           isPlaying={isPlaying}
