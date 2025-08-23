@@ -10,7 +10,7 @@ const Player = () => {
 
   const mockSong = {
     title: "Mock Song",
-    artist: "DJ Latino",
+    artist: "DJ Latinx",
     duration: 180, // seconds
   };
 
