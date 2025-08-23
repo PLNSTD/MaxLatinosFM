@@ -16,14 +16,14 @@ const Player = () => {
 
   return (
     <div className="w-full max-w-md bg-gray-800 p-6 rounded-xl shadow-lg text-white flex flex-col gap-4">
-      <SongInfo title={mockSong.title} artist={mockSong.artist} />
-      <ProgressBar progress={progress} />
       <div className="flex justify-center">
         <PlayButton
           isPlaying={isPlaying}
           onClick={() => setIsPlaying(!isPlaying)}
         />
       </div>
+      <SongInfo title={mockSong.title} artist={mockSong.artist} />
+      <ProgressBar progress={progress} />
     </div>
   );
 };
