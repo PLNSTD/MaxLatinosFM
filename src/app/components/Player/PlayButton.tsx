@@ -7,7 +7,7 @@ const PlayButton = ({ isPlaying, onClick }: PlayButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className="flex w-100 h-100 items-center justify-center bg-center bg-cover p-4 rounded-full shadow-2xl text-black font-bold"
+      className="flex w-[200px] h-[200px] md:w-[400px] md:h-[400px] sm:w-[300px] sm:h-[300px] items-center justify-center bg-center bg-cover p-4 rounded-full shadow-2xl text-black font-bold"
       style={{
         backgroundImage: `url(/Logo.jpg)`,
       }}
