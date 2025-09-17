@@ -1,3 +1,4 @@
+"use client"; //
 import Navbar from "@/app/components/Navbar";
 import Player from "@/app/components/Player/Player";
 
