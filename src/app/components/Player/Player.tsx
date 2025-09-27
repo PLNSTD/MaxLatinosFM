@@ -4,7 +4,7 @@ import PlayButton from "./PlayButton";
 import ProgressBar from "./ProgressBar";
 import SongInfo from "./SongInfo";
 
-const API = "http://localhost:3001/songs/1";
+const API = "https://maxlatinosfm-backend.onrender.com/songs/1";
 
 const Player = () => {
   const [isPlaying, setIsPlaying] = useState(false);
