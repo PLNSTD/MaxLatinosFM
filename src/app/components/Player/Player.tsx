@@ -4,7 +4,7 @@ import PlayButton from "./PlayButton";
 import ProgressBar from "./ProgressBar";
 import SongInfo from "./SongInfo";
 
-const API = "http://localhost:3001/songs/2";
+const API = "http://localhost:3001/songs/1";
 
 const Player = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -29,7 +29,7 @@ const Player = () => {
         setSong(songDetails);
 
         // Fetch audio as blob
-        const audioRes = await fetch(`${API}/audio`);
+        const audioRes = await fetch(songDetails.path);
         const blob = await audioRes.blob();
 
         // Convert blob to URL
