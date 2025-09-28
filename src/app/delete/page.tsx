@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+// const API = "http://localhost:3001/songs/";
+const API = "https://maxlatinosfm-backend.onrender.com/songs/";
+
 export default function DeleteSongPage() {
   const router = useRouter();
 
@@ -29,7 +32,7 @@ export default function DeleteSongPage() {
     setMessage("");
 
     try {
-      const res = await fetch(`http://localhost:3001/songs/${songId}`, {
+      const res = await fetch(`${API}${songId}`, {
         method: "DELETE",
       });
 

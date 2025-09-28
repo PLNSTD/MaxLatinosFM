@@ -4,6 +4,9 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+//const API = "http://localhost:3001/songs/upload";
+const API = "https://maxlatinosfm-backend.onrender.com/songs/upload";
+
 export default function UploadPage() {
   const router = useRouter();
 
@@ -32,7 +35,7 @@ export default function UploadPage() {
     formData.append("artist", artist);
 
     try {
-      const res = await fetch("http://localhost:3001/songs/upload", {
+      const res = await fetch(`${API}`, {
         method: "POST",
         body: formData,
       });
