@@ -18,7 +18,7 @@ export default function UploadPage() {
   const handleClick = () => fileInputRef.current?.click();
 
   const handleUpload = async () => {
-    if (!file || !title || !artist || !duration) {
+    if (!file || !title || !artist) {
       setMessage("Please fill all fields and select a file.");
       return;
     }
@@ -30,7 +30,6 @@ export default function UploadPage() {
     formData.append("song", file);
     formData.append("title", title);
     formData.append("artist", artist);
-    formData.append("duration", duration);
 
     try {
       const res = await fetch("http://localhost:3001/songs/upload", {
@@ -43,7 +42,6 @@ export default function UploadPage() {
         setMessage("✅ Upload successful!");
         setTitle("");
         setArtist("");
-        setDuration("");
         setFile(null);
       } else {
         setMessage("❌ Upload failed: " + data.error);
