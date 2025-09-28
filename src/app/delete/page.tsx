@@ -46,21 +46,53 @@ export default function DeleteSongPage() {
     }
 
     setLoading(false);
-    setConfirmStep(false);
+    setConfirmStep(false); // reset step
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-4">
-      <div className="bg-[var(--color-primary)] p-6 rounded-xl w-full max-w-md shadow-lg">
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "var(--color-bg)",
+        padding: "2rem",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: "var(--color-primary)",
+          padding: "2rem",
+          borderRadius: "12px",
+          width: "100%",
+          maxWidth: "400px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+        }}
+      >
         {/* Back Button */}
         <button
           onClick={() => router.push("/")}
-          className="text-[var(--color-secondary)] text-lg mb-4 hover:opacity-80 transition"
+          style={{
+            marginBottom: "1rem",
+            backgroundColor: "transparent",
+            border: "none",
+            color: "var(--color-secondary)",
+            fontSize: "1.5rem",
+            cursor: "pointer",
+          }}
         >
           ← Exit
         </button>
 
-        <h2 className="text-center text-[var(--color-secondary)] font-bold text-xl mb-6">
+        <h2
+          style={{
+            textAlign: "center",
+            color: "var(--color-secondary)",
+            fontWeight: "bold",
+            marginBottom: "1rem",
+          }}
+        >
           Delete Song
         </h2>
 
@@ -69,17 +101,28 @@ export default function DeleteSongPage() {
           placeholder="Enter Song ID"
           value={songId}
           onChange={(e) => setSongId(e.target.value)}
-          className="w-full p-2 mb-4 rounded-md border border-[var(--color-third)]"
+          style={{
+            width: "100%",
+            padding: "0.5rem",
+            marginBottom: "0.5rem",
+            borderRadius: "6px",
+            border: `1px solid var(--color-third)`,
+          }}
         />
 
         <button
           onClick={handleDelete}
           disabled={loading}
-          className={`w-full p-3 font-bold rounded-md text-[var(--color-primary)] transition ${
-            confirmStep
-              ? "bg-red-500 hover:bg-red-600"
-              : "bg-[var(--color-secondary)] hover:opacity-90"
-          } disabled:opacity-50`}
+          style={{
+            width: "100%",
+            padding: "0.75rem",
+            backgroundColor: confirmStep ? "red" : "var(--color-secondary)",
+            color: "var(--color-primary)",
+            fontWeight: "bold",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
         >
           {loading
             ? "Deleting..."
@@ -90,11 +133,12 @@ export default function DeleteSongPage() {
 
         {message && (
           <p
-            className={`text-center font-bold mt-4 break-words ${
-              confirmStep || message.includes("❌")
-                ? "text-red-500"
-                : "text-[var(--color-third)]"
-            }`}
+            style={{
+              textAlign: "center",
+              marginTop: "1rem",
+              color: confirmStep ? "red" : "var(--color-third)",
+              fontWeight: "bold",
+            }}
           >
             {message}
           </p>

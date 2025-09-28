@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -12,6 +13,9 @@ export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleClick = () => fileInputRef.current?.click();
 
   const handleUpload = async () => {
     if (!file || !title || !artist || !duration) {
@@ -29,12 +33,12 @@ export default function UploadPage() {
     formData.append("duration", duration);
 
     try {
-      const res = await fetch("http://localhost:3000/upload", {
+      const res = await fetch("http://localhost:3001/songs/upload", {
         method: "POST",
         body: formData,
       });
-
       const data = await res.json();
+
       if (res.ok) {
         setMessage("✅ Upload successful!");
         setTitle("");
@@ -53,130 +57,72 @@ export default function UploadPage() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "var(--color-bg)",
-        padding: "2rem",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "var(--color-primary)",
-          padding: "2rem",
-          borderRadius: "12px",
-          width: "100%",
-          maxWidth: "400px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-        }}
-      >
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-4">
+      <div className="bg-[var(--color-primary)] p-6 rounded-xl w-full max-w-md shadow-lg">
         {/* Back Button */}
         <button
           onClick={() => router.push("/")}
-          style={{
-            marginBottom: "1rem",
-            backgroundColor: "transparent",
-            border: "none",
-            color: "var(--color-secondary)",
-            fontSize: "1.5rem",
-            cursor: "pointer",
-          }}
+          className="text-[var(--color-secondary)] text-lg mb-4 hover:opacity-80 transition"
         >
           ← Exit
         </button>
 
-        <h2
-          style={{
-            textAlign: "center",
-            color: "var(--color-secondary)",
-            fontWeight: "bold",
-            marginBottom: "1rem",
-          }}
-        >
+        <h2 className="text-center text-[var(--color-secondary)] font-bold text-xl mb-6">
           Upload Song
         </h2>
 
+        {/* Inputs */}
         <input
           type="text"
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "0.5rem",
-            marginBottom: "0.5rem",
-            borderRadius: "6px",
-            border: `1px solid var(--color-third)`,
-          }}
+          className="w-full p-2 mb-3 rounded-md border border-[var(--color-third)]"
         />
-
         <input
           type="text"
           placeholder="Artist"
           value={artist}
           onChange={(e) => setArtist(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "0.5rem",
-            marginBottom: "0.5rem",
-            borderRadius: "6px",
-            border: `1px solid var(--color-third)`,
-          }}
+          className="w-full p-2 mb-3 rounded-md border border-[var(--color-third)]"
         />
 
-        <input
-          type="text"
-          placeholder="Duration (e.g. 3:45)"
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "0.5rem",
-            marginBottom: "0.5rem",
-            borderRadius: "6px",
-            border: `1px solid var(--color-third)`,
-          }}
-        />
+        {/* File Upload */}
+        <div className="flex items-center gap-2 mb-4">
+          <Image
+            src="/favicon.ico"
+            alt="Upload Audio"
+            width={30}
+            height={30}
+            className="cursor-pointer hover:opacity-80 transition"
+            onClick={handleClick}
+          />
+          <input
+            type="file"
+            accept="audio/*"
+            ref={fileInputRef}
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="flex-1"
+          />
+        </div>
+        {file && (
+          <p className="text-sm text-[var(--color-third)] truncate mb-4">
+            Selected: {file.name}
+          </p>
+        )}
 
-        <input
-          type="file"
-          accept="audio/*"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-          style={{
-            width: "100%",
-            marginBottom: "1rem",
-          }}
-        />
-
+        {/* Upload Button */}
         <button
           onClick={handleUpload}
           disabled={loading}
-          style={{
-            width: "100%",
-            padding: "0.75rem",
-            backgroundColor: "var(--color-secondary)",
-            color: "var(--color-primary)",
-            fontWeight: "bold",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
+          className="w-full p-3 bg-[var(--color-secondary)] text-[var(--color-primary)] font-bold rounded-md hover:opacity-90 transition disabled:opacity-50"
         >
           {loading ? "Uploading..." : "Upload"}
         </button>
 
+        {/* Message */}
         {message && (
-          <p
-            style={{
-              textAlign: "center",
-              marginTop: "1rem",
-              color: "var(--color-third)",
-              fontWeight: "bold",
-            }}
-          >
+          <p className="text-center text-[var(--color-third)] font-bold mt-4 break-words">
             {message}
           </p>
         )}
