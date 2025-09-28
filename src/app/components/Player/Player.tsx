@@ -5,7 +5,8 @@ import ProgressBar from "./ProgressBar";
 import SongInfo from "./SongInfo";
 import { get } from "http";
 
-const API = "http://localhost:3001/songs/now";
+// const API = "http://localhost:3001/songs/now";
+const API = "https://maxlatinosfm-backend.onrender.com/songs/now";
 
 const Player = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -29,7 +30,7 @@ const Player = () => {
     try {
       console.log("FETCHING");
       // Fetch metadata
-      const res = await fetch("http://localhost:3001/songs/now");
+      const res = await fetch(`${API}`);
       const ans = await res.json();
       setSong(ans.song);
       if (ans.elapsed >= ans.song.duration) {
