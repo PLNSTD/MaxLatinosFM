@@ -1,105 +1,130 @@
 "use client";
+import { useState, useRef, useEffect } from "react";
+import PlayButton from "./PlayButton";
+import ProgressBar from "./ProgressBar";
+import SongInfo from "./SongInfo";
+import { get } from "http";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+const API = "http://localhost:3001/songs/now";
 
-export default function DeleteSongPage() {
-  const router = useRouter();
-
-  const [songId, setSongId] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [confirmStep, setConfirmStep] = useState(false);
-
-  const handleDelete = async () => {
-    if (!songId) {
-      setMessage("⚠️ Please enter a Song ID.");
-      return;
-    }
-
-    if (!confirmStep) {
-      setMessage(
-        "❓ Are you sure you want to delete this song? Click again to confirm."
-      );
-      setConfirmStep(true);
-      return;
-    }
-
-    setLoading(true);
-    setMessage("");
-
-    try {
-      const res = await fetch(`http://localhost:3001/songs/${songId}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setMessage("✅ Song deleted successfully!");
-        setSongId("");
-      } else {
-        setMessage("❌ Deletion failed: " + data.error);
+const Player = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(100);
+  const [currentSong, setSong] = useState<
+    | {
+        id: number;
+        title: string;
+        artist: string;
+        duration: number;
       }
-    } catch (err) {
-      console.error(err);
-      setMessage("❌ Deletion failed: Server error");
-    }
+    | undefined
+  >(undefined);
+  const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [startTime, setStartTime] = useState<number>();
+  const [delay, setDelay] = useState<number>();
+  const [loadNext, setLoadNext] = useState(true);
 
-    setLoading(false);
-    setConfirmStep(false);
+  const fetchSong = async () => {
+    try {
+      console.log("FETCHING");
+      // Fetch metadata
+      const res = await fetch("http://localhost:3001/songs/now");
+      const ans = await res.json();
+      setSong(ans.song);
+      if (ans.elapsed >= ans.song.duration) {
+        fetchSong();
+        return;
+      }
+      setAudioUrl(ans.song.path);
+      setDelay(ans.elapsed);
+      setStartTime(Date.now());
+      audioRef.current!.load();
+      console.log("StartTime Set:" + startTime);
+
+      console.log("DONE");
+    } catch (err) {
+      console.error("Error fetching song:", err);
+    }
+  };
+
+  // Fetch song info + stream
+  useEffect(() => {
+    console.log("useEffect running");
+    fetchSong();
+    audioRef.current!.load();
+    audioRef.current!.play().catch((err) => console.log("Play failed:", err));
+  }, [loadNext]);
+
+  const getElapsed = () => {
+    if (!startTime) return 0;
+    return (Date.now() - startTime) / 1000 + delay!;
+  };
+
+  // Sync audio currentTime when metadata loads
+  const handleLoadedMetadata = () => {
+    if (audioRef.current && startTime) {
+      audioRef.current.currentTime = getElapsed();
+      // audioRef.current.play().catch((err) => {
+      //   console.log("Play failed:", err);
+      // });
+    }
+  };
+
+  // Update progress bar
+  const handleTimeUpdate = () => {
+    if (!audioRef.current) return;
+    setProgress(
+      (audioRef.current.currentTime / audioRef.current.duration) * 100
+    );
+    if (progress >= 100) {
+      setLoadNext(true);
+      audioRef.current.pause();
+    }
+  };
+
+  const handleEnded = async () => {
+    fetchSong();
+    setLoadNext((c) => !c);
+  };
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play();
+      audioRef.current.currentTime = getElapsed();
+      setIsPlaying(true);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-4">
-      <div className="bg-[var(--color-primary)] p-6 rounded-xl w-full max-w-md shadow-lg">
-        {/* Back Button */}
-        <button
-          onClick={() => router.push("/")}
-          className="text-[var(--color-secondary)] text-lg mb-4 hover:opacity-80 transition"
-        >
-          ← Exit
-        </button>
-
-        <h2 className="text-center text-[var(--color-secondary)] font-bold text-xl mb-6">
-          Delete Song
-        </h2>
-
-        <input
-          type="text"
-          placeholder="Enter Song ID"
-          value={songId}
-          onChange={(e) => setSongId(e.target.value)}
-          className="w-full p-2 mb-4 rounded-md border border-[var(--color-third)]"
-        />
-
-        <button
-          onClick={handleDelete}
-          disabled={loading}
-          className={`w-full p-3 font-bold rounded-md text-[var(--color-primary)] transition ${
-            confirmStep
-              ? "bg-red-500 hover:bg-red-600"
-              : "bg-[var(--color-secondary)] hover:opacity-90"
-          } disabled:opacity-50`}
-        >
-          {loading
-            ? "Deleting..."
-            : confirmStep
-            ? "Click again to confirm delete"
-            : "Delete Song"}
-        </button>
-
-        {message && (
-          <p
-            className={`text-center font-bold mt-4 break-words ${
-              confirmStep || message.includes("❌")
-                ? "text-red-500"
-                : "text-[var(--color-third)]"
-            }`}
-          >
-            {message}
-          </p>
-        )}
+    <div className="w-full max-w-md p-6 rounded-xl text-white flex flex-col gap-4">
+      <div className="flex justify-center">
+        <PlayButton isPlaying={isPlaying} onClick={togglePlay} />
       </div>
+      <SongInfo
+        title={currentSong?.title ?? "Loading..."}
+        artist={currentSong?.artist ?? ""}
+      />
+      <ProgressBar progress={progress} />
+
+      {/* 🔊 Hidden audio element for playback */}
+
+      <audio
+        key={currentSong ? currentSong.id : undefined}
+        ref={audioRef}
+        src={audioUrl}
+        autoPlay
+        preload="auto"
+        onLoadedMetadata={handleLoadedMetadata}
+        onTimeUpdate={handleTimeUpdate}
+        onEnded={handleEnded}
+      />
     </div>
   );
-}
+};
+
+export default Player;
