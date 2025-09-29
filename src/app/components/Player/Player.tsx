@@ -35,7 +35,7 @@ const Player = () => {
     try {
       console.log("Fetching..");
       // Fetch metadata
-      const res = await fetch(`${API}`);
+      const res = await fetch(`${API}`, { signal: controller.signal });
       const ans = await res.json();
 
       setSong(ans.song);
