@@ -15,7 +15,7 @@ const Player = () => {
     | {
         id: number;
         title: string;
-        artist: string;
+        artist?: string;
         duration: number;
       }
     | undefined
@@ -25,25 +25,33 @@ const Player = () => {
   const [startTime, setStartTime] = useState<number>();
   const [delay, setDelay] = useState<number>();
   const [loadNext, setLoadNext] = useState(true);
+  const abortRef = useRef<AbortController | null>(null);
 
   const fetchSong = async () => {
+    if (abortRef.current) abortRef.current.abort(); // cancel previous fetch
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
-      console.log("FETCHING");
+      console.log("Fetching..");
       // Fetch metadata
       const res = await fetch(`${API}`);
       const ans = await res.json();
+
       setSong(ans.song);
+
       if (ans.elapsed >= ans.song.duration) {
-        fetchSong();
+        console.log("fetchSong Calling itself..");
+        // Wait a short delay before retrying
+        setTimeout(fetchSong, 1000); // 1 second
         return;
       }
+
       setAudioUrl(ans.song.path);
       setDelay(ans.elapsed);
       setStartTime(Date.now());
       audioRef.current!.load();
-      console.log("StartTime Set:" + startTime);
-
-      console.log("DONE");
+      console.log("Song Loaded!");
     } catch (err) {
       console.error("Error fetching song:", err);
     }
@@ -51,7 +59,7 @@ const Player = () => {
 
   // Fetch song info + stream
   useEffect(() => {
-    console.log("useEffect running");
+    console.log("UseEffect Calling fetch..");
     fetchSong();
     audioRef.current!.load();
     audioRef.current!.play().catch((err) => console.log("Play failed:", err));
@@ -66,9 +74,6 @@ const Player = () => {
   const handleLoadedMetadata = () => {
     if (audioRef.current && startTime) {
       audioRef.current.currentTime = getElapsed();
-      // audioRef.current.play().catch((err) => {
-      //   console.log("Play failed:", err);
-      // });
     }
   };
 
@@ -78,7 +83,7 @@ const Player = () => {
     setProgress(
       (audioRef.current.currentTime / audioRef.current.duration) * 100
     );
-    if (progress >= 100) {
+    if (progress == 100) {
       setLoadNext(true);
       audioRef.current.pause();
     }

@@ -46,6 +46,7 @@ export default function UploadPage() {
         setTitle("");
         setArtist("");
         setFile(null);
+        fileInputRef.current!.value = "";
       } else {
         setMessage("❌ Upload failed: " + data.error);
       }
@@ -91,11 +92,12 @@ export default function UploadPage() {
         {/* File Upload */}
         <div className="flex items-center gap-2 mb-4">
           <Image
-            src="/favicon.ico"
+            src="/icons/Upload/upload_icon.svg"
             alt="Upload Audio"
-            width={30}
-            height={30}
-            className="cursor-pointer hover:opacity-80 transition"
+            width={20}
+            height={20}
+            style={{ width: "20px", height: "auto" }}
+            className="cursor-pointer hover:opacity-80 transition hover:scale-150"
             onClick={handleClick}
           />
           <input
