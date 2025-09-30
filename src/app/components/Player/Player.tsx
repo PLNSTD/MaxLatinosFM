@@ -44,7 +44,7 @@ const Player = () => {
       // Don't use currentSong here, it's stale
       console.log(`Fetched song: ${ans.song.id}`);
 
-      if (currentSong === undefined || currentSong?.id === ans.song.id) {
+      if (!res.ok || currentSong?.id === ans.song.id) {
         console.log("Song already finished, retrying...");
 
         setTimeout(fetchSong, 1000);
