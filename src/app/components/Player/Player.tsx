@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ErrorInfo } from "react";
 import PlayButton from "./PlayButton";
 import ProgressBar from "./ProgressBar";
 import SongInfo from "./SongInfo";
@@ -28,32 +28,46 @@ const Player = () => {
   const abortRef = useRef<AbortController | null>(null);
 
   const fetchSong = async () => {
-    if (abortRef.current) abortRef.current.abort(); // cancel previous fetch
+    if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
     try {
       console.log("Fetching..");
-      // Fetch metadata
-      const res = await fetch(`${API}`, { signal: controller.signal });
+
+      const res = await fetch(API, { signal: controller.signal });
       const ans = await res.json();
 
-      setSong(ans.song);
+      // ⏸ ensure this is still the latest request
+      if (abortRef.current?.signal.aborted) return;
 
-      if (ans.elapsed >= ans.song.duration) {
-        console.log("fetchSong Calling itself..");
-        // Wait a short delay before retrying
-        setTimeout(fetchSong, 1000); // 1 second
+      // Don't use currentSong here, it's stale
+      console.log(`Fetched song: ${ans.song.id}`);
+
+      if (currentSong?.id === ans.song.id) {
+        console.log("Song already finished, retrying...");
+
+        setTimeout(fetchSong, 1000);
         return;
       }
 
+      // ✅ set new song safely
+      setSong(ans.song);
       setAudioUrl(ans.song.path);
       setDelay(ans.elapsed);
       setStartTime(Date.now());
-      audioRef.current!.load();
+
+      if (audioRef.current) {
+        audioRef.current.load();
+      }
       console.log("Song Loaded!");
-    } catch (err) {
-      console.error("Error fetching song:", err);
+    } catch (error: unknown) {
+      const err = error as Error;
+      if (err.name === "AbortError") {
+        console.log("Fetch aborted (expected)");
+      } else {
+        console.error("Error fetching song:", err);
+      }
     }
   };
 
@@ -63,7 +77,7 @@ const Player = () => {
     fetchSong();
     audioRef.current!.load();
     audioRef.current!.play().catch((err) => console.log("Play failed:", err));
-  }, [loadNext]);
+  }, []);
 
   const getElapsed = () => {
     if (!startTime) return 0;
@@ -91,7 +105,7 @@ const Player = () => {
 
   const handleEnded = async () => {
     fetchSong();
-    setLoadNext((c) => !c);
+    //setLoadNext((c) => !c);
   };
 
   const togglePlay = () => {
