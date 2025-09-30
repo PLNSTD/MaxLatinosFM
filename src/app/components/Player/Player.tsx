@@ -5,8 +5,8 @@ import ProgressBar from "./ProgressBar";
 import SongInfo from "./SongInfo";
 import { get } from "http";
 
-// const API = "http://localhost:3001/songs/now";
-const API = "https://maxlatinosfm-backend.onrender.com/songs/now";
+const API = "http://localhost:3001/songs/now";
+//const API = "https://maxlatinosfm-backend.onrender.com/songs/now";
 
 const Player = () => {
   const [isPlaying, setIsPlaying] = useState(false);
