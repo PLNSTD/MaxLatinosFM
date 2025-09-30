@@ -102,7 +102,7 @@ export default function UploadPage() {
           />
           <input
             type="file"
-            accept=".mp3,audio/mp3,audio/mpeg,audio/*"
+            accept=".mp3,.wav,.m4a,.aac,.ogg,audio/mpeg,audio/wav,audio/x-wav,audio/aac,audio/mp4,audio/ogg,audio/*"
             ref={fileInputRef}
             onChange={(e) => setFile(e.target.files?.[0] || null)}
             className="flex-1"
