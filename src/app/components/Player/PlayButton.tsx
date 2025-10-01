@@ -1,12 +1,14 @@
 interface PlayButtonProps {
   isPlaying: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }
 
-const PlayButton = ({ isPlaying, onClick }: PlayButtonProps) => {
+const PlayButton = ({ isPlaying, onClick, disabled }: PlayButtonProps) => {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className="flex w-[200px] h-[200px] md:w-[400px] md:h-[400px] sm:w-[300px] sm:h-[300px] items-center justify-center bg-center bg-cover p-4 rounded-full shadow-2xl text-black font-bold"
       style={{
         backgroundImage: `url(/Logo.jpg)`,

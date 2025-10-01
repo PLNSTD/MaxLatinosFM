@@ -123,7 +123,11 @@ const Player = () => {
   return (
     <div className="w-full max-w-md p-6 rounded-xl text-white flex flex-col gap-4">
       <div className="flex justify-center">
-        <PlayButton isPlaying={isPlaying} onClick={togglePlay} />
+        <PlayButton
+          isPlaying={isPlaying}
+          onClick={togglePlay}
+          disabled={currentSong !== undefined ? false : true}
+        />
       </div>
       <SongInfo
         title={currentSong?.title ?? "Loading..."}
