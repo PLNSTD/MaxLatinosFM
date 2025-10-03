@@ -18,7 +18,7 @@ export default function SongList() {
   useEffect(() => {
     const fetchSongs = async () => {
       try {
-        const res = await fetch(`${API}`);
+        const res = await fetch(`${API}/list`);
         const data: Song[] = await res.json();
         data.sort((a, b) => a.artist.localeCompare(b.artist));
         setSongs(data);
