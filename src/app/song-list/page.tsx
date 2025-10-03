@@ -8,8 +8,8 @@ interface Song {
   title: string;
 }
 
-// const API = "http://localhost:3001/songs/list";
-const API = "https://maxlatinosfm-backend.onrender.com/songs/list";
+// const API = "http://localhost:3001/songs/";
+const API = "https://maxlatinosfm-backend.onrender.com/songs/";
 
 export default function SongList() {
   const [songs, setSongs] = useState<Song[]>([]);
@@ -33,7 +33,7 @@ export default function SongList() {
 
   const setSong = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:3001/songs/${id}`);
+      const res = await fetch(`${API}${id}`);
     } catch (err) {
       console.error("Failed to set songs:", err);
     } finally {
@@ -77,7 +77,7 @@ export default function SongList() {
             </div>
 
             <button
-              className="ml-4 px-3 py-1 bg-[var(--color-primary)] text-[var(--color-bg)] rounded-full hover:bg-[var(--color-secondary)] transition-colors duration-200"
+              className="ml-4 px-3 py-1 bg-[var(--color-primary)] text-[var(--color-bg)] rounded-full hover:bg-[var(--color-secondary)] transition-colors duration-200 cursor-pointer"
               onClick={() => setSong(song.id)}
             >
               ▶️ Play
