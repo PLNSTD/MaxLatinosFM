@@ -17,6 +17,7 @@ const Player = () => {
         title: string;
         artist?: string;
         duration: number;
+        path: string;
       }
     | undefined
   >(undefined);

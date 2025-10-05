@@ -6,6 +6,7 @@ interface Song {
   duration: number;
   artist: string;
   title: string;
+  path: string;
 }
 
 interface UpdateSongModalProps {
@@ -14,40 +15,50 @@ interface UpdateSongModalProps {
   onUpdate: (updatedSong: Song) => void;
 }
 
-export default function UpdateSongModal({ song, onClose, onUpdate }: UpdateSongModalProps) {
+// const API = "http://localhost:3001/songs/";
+const API = "https://maxlatinosfm-backend.onrender.com/songs/";
+
+export default function UpdateSongModal({
+  song,
+  onClose,
+  onUpdate,
+}: UpdateSongModalProps) {
   const [formData, setFormData] = useState<Song>({ ...song });
   const [loading, setLoading] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  document.body.style.overflow = "hidden";
-  return () => { document.body.style.overflow = "auto"; };
-}, []);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: name === "duration" ? Number(value) : value,
     }));
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.artist || !formData.duration) {
+    if (!formData.title || !formData.artist || !formData.path) {
       alert("❌ Please fill all fields");
       return;
     }
 
     setLoading(true);
     try {
-      const res = await fetch(`/api/songs/${song.id}`, {
+      const res = await fetch(`${API}${song.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       if (res.ok) {
-        onUpdate(formData);
+        const updatedSong = await res.json();
+        onUpdate(updatedSong);
         onClose();
       } else {
         alert("❌ Failed to update song");
@@ -69,7 +80,9 @@ export default function UpdateSongModal({ song, onClose, onUpdate }: UpdateSongM
         className="bg-[var(--color-dark)] text-white p-6 rounded-2xl shadow-xl w-96 transform transition-all duration-300 scale-105 pointer-events-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold mb-4 text-[var(--color-bg)]">Update Song</h2>
+        <h2 className="text-xl font-bold mb-4 text-[var(--color-bg)]">
+          Update Song
+        </h2>
 
         <input
           type="text"
@@ -88,13 +101,14 @@ export default function UpdateSongModal({ song, onClose, onUpdate }: UpdateSongM
           placeholder="Artist"
         />
         <input
-          type="number"
-          name="duration"
-          value={formData.duration}
+          type="string"
+          name="path"
+          value={formData.path}
           onChange={handleChange}
-          className="border border-gray-600 bg-[var(--color-dark)] p-2 w-full mb-5 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-bg)] transition"
-          placeholder="Duration (seconds)"
+          className="border border-gray-600 bg-[var(--color-dark)] p-2 w-full mb-5 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-bg)] transition disabled:bg-gray-500 disabled:opacity-20 disabled:text-gray-400 disabled:cursor-not-allowed"
+          placeholder="Storage Path"
           min={0}
+          disabled
         />
 
         <div className="flex justify-end gap-3">
