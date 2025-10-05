@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import SongCard from "./SongCard";
 import UpdateSongModal from "./UpdateSongModal";
 import Player from "./Player";
+import RemoveSongModal from "./RemoveSongModal";
 
 interface Song {
   id: number;
@@ -20,6 +21,7 @@ export default function SongList() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalSong, setModalSong] = useState<Song | null>(null); // <-- modal state
+  const [modalRemoveSong, setModalRemoveSong] = useState<Song | null>(null); // <-- modal state
   const abortRef = useRef<AbortController | null>(null);
 
   const [toast, setToast] = useState<{
@@ -104,6 +106,8 @@ export default function SongList() {
         return;
       }
 
+      setModalRemoveSong(null);
+
       // Optionally parse response if your API returns something
       // const data = await res.json();
 
@@ -153,8 +157,7 @@ export default function SongList() {
           song={song}
           onPlay={handlePlay}
           onModify={(song) => setModalSong(song)} // <-- card signals parent
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
+          onDelete={(song) => setModalRemoveSong(song)}
         />
       ))}
 
@@ -163,6 +166,14 @@ export default function SongList() {
           song={modalSong}
           onClose={() => setModalSong(null)}
           onUpdate={handleUpdate}
+        />
+      )}
+
+      {modalRemoveSong && (
+        <RemoveSongModal
+          song={modalRemoveSong}
+          onClose={() => setModalRemoveSong(null)}
+          onConfirm={handleDelete}
         />
       )}
 

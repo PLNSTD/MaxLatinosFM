@@ -15,7 +15,6 @@ interface UpdateSongModalProps {
   onUpdate: (updatedSong: Song) => void;
 }
 
-// const API = "http://localhost:3001/songs/";
 const API = "https://maxlatinosfm-backend.onrender.com/songs/";
 
 export default function UpdateSongModal({
@@ -73,56 +72,58 @@ export default function UpdateSongModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center backdrop-blur-sm"
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4"
       onClick={onClose}
     >
       <div
-        className="bg-[var(--color-dark)] text-white p-6 rounded-2xl shadow-xl w-96 transform transition-all duration-300 scale-105 pointer-events-auto"
+        ref={modalRef}
+        className="relative bg-[var(--color-dark)] text-white w-full max-w-md rounded-2xl shadow-2xl border border-[var(--color-bg)]/30 
+        p-6 sm:p-8 transform scale-100 animate-fadeIn transition-all duration-300"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold mb-4 text-[var(--color-bg)]">
-          Update Song
+        <h2 className="text-2xl font-bold mb-6 text-center text-[var(--color-primary)]">
+          🎵 Update Song
         </h2>
 
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          className="border border-gray-600 bg-[var(--color-dark)] p-2 w-full mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-bg)] transition"
-          placeholder="Title"
-        />
-        <input
-          type="text"
-          name="artist"
-          value={formData.artist}
-          onChange={handleChange}
-          className="border border-gray-600 bg-[var(--color-dark)] p-2 w-full mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-bg)] transition"
-          placeholder="Artist"
-        />
-        <input
-          type="string"
-          name="path"
-          value={formData.path}
-          onChange={handleChange}
-          className="border border-gray-600 bg-[var(--color-dark)] p-2 w-full mb-5 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-bg)] transition disabled:bg-gray-500 disabled:opacity-20 disabled:text-gray-400 disabled:cursor-not-allowed"
-          placeholder="Storage Path"
-          min={0}
-          disabled
-        />
+        <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className="w-full rounded-lg p-3 bg-[#1e1e1e] border border-gray-700 focus:border-[var(--color-third)] focus:ring-2 focus:ring-[var(--color-third)] outline-none transition text-[var(--color-primary)] placeholder-gray-500"
+            placeholder="Title"
+          />
+          <input
+            type="text"
+            name="artist"
+            value={formData.artist}
+            onChange={handleChange}
+            className="w-full rounded-lg p-3 bg-[#1e1e1e] border border-gray-700 focus:border-[var(--color-third)] focus:ring-2 focus:ring-[var(--color-third)] outline-none transition text-[var(--color-primary)] placeholder-gray-500"
+            placeholder="Artist"
+          />
+          <input
+            type="text"
+            name="path"
+            value={formData.path}
+            disabled
+            className="w-full rounded-lg p-3 bg-[#1e1e1e]/70 border border-gray-700 text-gray-400 cursor-not-allowed"
+            placeholder="Storage Path"
+          />
+        </div>
 
-        <div className="flex justify-end gap-3">
+        <div className="flex justify-end gap-3 mt-8">
           <button
-            className="px-4 py-2 bg-[var(--color-secondary)] rounded-lg hover:bg-red-600 transition"
             onClick={onClose}
             disabled={loading}
+            className="px-5 py-2.5 rounded-lg bg-[var(--color-secondary)] text-white font-semibold hover:opacity-90 hover:scale-105 transition disabled:opacity-50"
           >
             Cancel
           </button>
           <button
-            className="px-4 py-2 bg-[var(--color-bg)] rounded-lg hover:bg-emerald-700 transition"
             onClick={handleSubmit}
             disabled={loading}
+            className="px-5 py-2.5 rounded-lg bg-[var(--color-bg)] text-white font-semibold hover:bg-[var(--color-third)] hover:scale-105 transition disabled:opacity-50"
           >
             {loading ? "Saving..." : "Save"}
           </button>

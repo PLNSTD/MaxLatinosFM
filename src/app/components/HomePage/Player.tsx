@@ -1,12 +1,11 @@
 "use client";
-import { useState, useRef, useEffect, ErrorInfo } from "react";
+import { useState, useRef, useEffect } from "react";
 import PlayButton from "./PlayButton";
 import ProgressBar from "./ProgressBar";
 import SongInfo from "./SongInfo";
-import { get } from "http";
 
-// const API = "http://localhost:3001/songs/now";
-const API = "https://maxlatinosfm-backend.onrender.com/songs/now";
+const API = "http://localhost:3001/songs/now";
+//const API = "https://maxlatinosfm-backend.onrender.com/songs/now";
 
 const Player = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -106,7 +105,6 @@ const Player = () => {
 
   const handleEnded = async () => {
     fetchSong();
-    //setLoadNext((c) => !c);
   };
 
   const togglePlay = () => {

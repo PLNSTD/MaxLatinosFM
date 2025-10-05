@@ -1,5 +1,4 @@
 "use client";
-import DeleteIcon from "@/../public/icons/Delete/delete2.svg";
 import Image from "next/image";
 
 interface Song {
@@ -14,14 +13,13 @@ interface SongCardProps {
   song: Song;
   onPlay: (song: Song) => void;
   onModify: (song: Song) => void;
-  onUpdate?: (updatedSong: Song) => void;
   onDelete: (song: Song) => void;
 }
 
 export default function SongCard({
   song,
-  onModify,
   onPlay,
+  onModify,
   onDelete,
 }: SongCardProps) {
   const durationToFormat = (seconds: number): string => {
@@ -34,66 +32,62 @@ export default function SongCard({
   };
 
   return (
-    <div className="p-4 md:p-5 rounded-2xl shadow-md bg-[var(--color-dark)] text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 transition hover:shadow-lg hover:scale-[1.02]">
+    <div className="group flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4 p-5 rounded-2xl bg-[var(--color-dark)] shadow-md transition-all hover:shadow-xl hover:-translate-y-1 hover:scale-[1.01]">
       {/* Song Info */}
-      <div className="flex flex-col">
-        <p className="text-base md:text-lg font-semibold">ID: {song.id}</p>
-        <p className="text-base md:text-lg font-semibold">{song.title}</p>
+      <div className="flex flex-col gap-1 text-white">
+        <p className="text-sm text-gray-400 font-medium">#{song.id}</p>
+        <p className="text-lg sm:text-xl font-semibold leading-tight group-hover:text-[var(--color-accent)] transition-colors">
+          {song.title}
+        </p>
         <p className="text-sm text-gray-300">{song.artist}</p>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-gray-500">
           {durationToFormat(song.duration)}
         </p>
       </div>
 
-      {/* Buttons */}
-      <div className="flex flex-wrap gap-2 sm:gap-3 mt-3 sm:mt-0">
-        {/* Play Button */}
-        {/* <button
-          className="px-4 md:px-5 py-2 rounded-xl font-medium bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-lg hover:scale-105 hover:shadow-xl transition-transform duration-200 cursor-pointer"
+      {/* Action Buttons */}
+      <div className="flex items-center gap-3 sm:gap-4 self-end sm:self-auto">
+        {/* Play */}
+        <button
           onClick={() => onPlay(song)}
+          className="p-2 rounded-xl bg-[var(--color-bg)] transition transform hover:scale-110 active:scale-95"
         >
-          ▶ Play
-        </button> */}
-        <Image
-          src="/icons/Play/play.svg"
-          alt="play audio"
-          width={20}
-          height={20}
-          style={{ width: "20px", height: "auto" }}
-          className="cursor-pointer hover:opacity-80 transition hover:scale-150 bg-[var(--color-bg)] rounded-lg"
-          onClick={() => onPlay(song)}
-        />
+          <Image
+            src="/icons/Play/play.svg"
+            alt="Play"
+            width={22}
+            height={22}
+            className="w-[22px] h-auto"
+          />
+        </button>
 
-        {/* Modify Button */}
-        {/* <button
+        {/* Modify */}
+        <button
           onClick={() => onModify(song)}
-          className="px-4 md:px-5 py-2 rounded-xl font-medium bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg hover:scale-105 hover:shadow-xl transition-transform duration-200 cursor-pointer"
+          className="p-2 rounded-xl bg-[var(--color-third)] transition transform hover:scale-110 active:scale-95"
         >
-          ✏ Modify
-        </button> */}
-        <Image
-          src="/icons/Modify/modify.svg"
-          alt="play audio"
-          width={20}
-          height={20}
-          style={{ width: "20px", height: "auto" }}
-          className="cursor-pointer hover:opacity-80 transition hover:scale-150 bg-[var(--color-third)] rounded-lg"
-          onClick={() => onModify(song)}
-        />
+          <Image
+            src="/icons/Modify/modify.svg"
+            alt="Modify"
+            width={22}
+            height={22}
+            className="w-[22px] h-auto"
+          />
+        </button>
 
-        {/* Delete Button */}
-        {/* <button className="px-4 md:px-5 py-2 rounded-xl font-medium bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg hover:scale-105 hover:shadow-xl transition-transform duration-200 cursor-pointer">
-          🗑 Delete
-        </button> */}
-        <Image
-          src="/icons/Delete/delete.svg"
-          alt="play audio"
-          width={20}
-          height={20}
-          style={{ width: "20px", height: "auto" }}
-          className="cursor-pointer hover:opacity-80 transition hover:scale-150 bg-red-500 rounded-lg"
+        {/* Delete */}
+        <button
           onClick={() => onDelete(song)}
-        />
+          className="p-2 rounded-xl bg-red-500 transition transform hover:scale-110 active:scale-95"
+        >
+          <Image
+            src="/icons/Delete/delete.svg"
+            alt="Delete"
+            width={22}
+            height={22}
+            className="w-[22px] h-auto"
+          />
+        </button>
       </div>
     </div>
   );
