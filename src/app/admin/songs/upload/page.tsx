@@ -63,7 +63,7 @@ export default function UploadPage() {
       <div className="bg-[var(--color-primary)] p-6 rounded-xl w-full max-w-md shadow-lg">
         {/* Back Button */}
         <button
-          onClick={() => router.push("/")}
+          onClick={() => router.push("/admin")}
           className="text-[var(--color-secondary)] text-lg mb-4 hover:opacity-80 transition"
         >
           ← Exit

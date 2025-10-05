@@ -1,6 +1,6 @@
 "use client"; //
 import Navbar from "@/app/components/Navbar";
-import Player from "@/app/components/HomePage/Player";
+import Player from "@/app/components/components/Player";
 
 export default function Home() {
   return (

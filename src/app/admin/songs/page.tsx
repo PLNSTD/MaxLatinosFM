@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import SongCard from "./SongCard";
-import UpdateSongModal from "./UpdateSongModal";
-import Player from "./Player";
-import RemoveSongModal from "./RemoveSongModal";
+import SongCard from "./components/SongCard";
+import UpdateSongModal from "./components/UpdateSongModal";
+import Player from "./components/Player";
+import RemoveSongModal from "./components/RemoveSongModal";
 
 interface Song {
   id: number;
