@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// const API = "http://localhost:3001/bumpers/";
-const API = "https://maxlatinosfm-backend.onrender.com/bumpers/";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function DeleteBumperPage() {
   const router = useRouter();
@@ -13,6 +12,26 @@ export default function DeleteBumperPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [confirmStep, setConfirmStep] = useState(false);
+
+  // Client-side auth check
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch(`${API}/auth/login/check`, {
+          method: "GET",
+          credentials: "include", // include cookies if API uses sessions
+        });
+        if (!res.ok) {
+          router.push("/admin/login");
+        } else {
+          setLoading(false);
+        }
+      } catch (err) {
+        router.push("/admin/login");
+      }
+    }
+    checkAuth();
+  }, [router]);
 
   const handleDelete = async () => {
     if (!bumperId) {
@@ -32,9 +51,14 @@ export default function DeleteBumperPage() {
     setMessage("");
 
     try {
-      const res = await fetch(`${API}${bumperId}`, {
+      const res = await fetch(`${API}/bumpers/admin/${bumperId}`, {
         method: "DELETE",
+        credentials: "include",
       });
+
+      if (res.status === 401) {
+        router.push("/admin/login"); // client-side redirect
+      }
 
       if (res.ok) {
         setMessage("✅ Bumper deleted successfully!");

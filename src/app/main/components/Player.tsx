@@ -4,8 +4,7 @@ import PlayButton from "./PlayButton";
 import ProgressBar from "./ProgressBar";
 import SongInfo from "./SongInfo";
 
-// const API = "http://localhost:3001/songs/now";
-const API = "https://maxlatinosfm-backend.onrender.com/songs/now";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 const Player = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -35,7 +34,9 @@ const Player = () => {
     try {
       console.log("Fetching..");
 
-      const res = await fetch(API, { signal: controller.signal });
+      const res = await fetch(`${API}/songs/now`, {
+        signal: controller.signal,
+      });
       const ans = await res.json();
 
       // ⏸ ensure this is still the latest request

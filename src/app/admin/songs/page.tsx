@@ -4,6 +4,7 @@ import SongCard from "./components/SongCard";
 import UpdateSongModal from "./components/UpdateSongModal";
 import Player from "./components/Player";
 import RemoveSongModal from "./components/RemoveSongModal";
+import { useRouter } from "next/navigation";
 
 interface Song {
   id: number;
@@ -13,10 +14,10 @@ interface Song {
   path: string;
 }
 
-// const API = "http://localhost:3001/songs/";
-const API = "https://maxlatinosfm-backend.onrender.com/songs/";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function SongList() {
+  const router = useRouter();
   const [testingSong, setTestingSong] = useState<Song | null>(null);
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,14 @@ export default function SongList() {
 
   const fetchSongs = async () => {
     try {
-      const res = await fetch(`${API}list`);
+      const res = await fetch(`${API}/songs/admin/list`, {
+        credentials: "include",
+      });
+
+      if (res.status === 401) {
+        router.push("/admin/login"); // client-side redirect
+      }
+
       const data: Song[] = await res.json();
       data.sort((a, b) => a.artist.localeCompare(b.artist));
       setSongs(data);
@@ -51,7 +59,7 @@ export default function SongList() {
 
   useEffect(() => {
     fetchSongs();
-  }, []);
+  }, [router]);
 
   const handlePlay = async (desiredSong: Song) => {
     if (abortRef.current) abortRef.current.abort();
@@ -61,9 +69,14 @@ export default function SongList() {
     try {
       console.log("Fetching..");
 
-      const res = await fetch(`${API}${desiredSong.id}`, {
+      const res = await fetch(`${API}/songs/admin/${desiredSong.id}`, {
         signal: controller.signal,
+        credentials: "include",
       });
+
+      if (res.status === 401) {
+        router.push("/admin/login"); // client-side redirect
+      }
       const ans = await res.json();
 
       // ⏸ ensure this is still the latest request
@@ -95,9 +108,14 @@ export default function SongList() {
     if (!songToDelete?.id) return; // safety check
 
     try {
-      const res = await fetch(`${API}${songToDelete.id}`, {
+      const res = await fetch(`${API}/songs/admin/${songToDelete.id}`, {
         method: "DELETE",
+        credentials: "include",
       });
+
+      if (res.status === 401) {
+        router.push("/admin/login"); // client-side redirect
+      }
 
       if (!res.ok) {
         const errorText = await res.text();
@@ -127,7 +145,11 @@ export default function SongList() {
   };
 
   if (loading)
-    return <p className="text-[var(--color-primary)]">Loading songs...</p>;
+    return (
+      <p className="text-[var(--color-primary)] text-center mt-10 animate-pulse">
+        Loading songs...
+      </p>
+    );
 
   return (
     <div className="space-y-4 p-6 bg-[var(--color-dark)] min-h-screen">

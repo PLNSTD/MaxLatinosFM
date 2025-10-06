@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Bumper {
@@ -7,17 +8,24 @@ interface Bumper {
   title: string;
 }
 
-// const API = "http://localhost:3001/bumpers/list";
-const API = "https://maxlatinosfm-backend.onrender.com/bumpers/list";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function BumperList() {
+  const router = useRouter();
   const [bumpers, setBumpers] = useState<Bumper[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBumpers = async () => {
       try {
-        const res = await fetch(`${API}`);
+        const res = await fetch(`${API}/bumpers/admin/list`, {
+          credentials: "include",
+        });
+
+        if (res.status === 401) {
+          router.push("/admin/login"); // client-side redirect
+        }
+
         const data: Bumper[] = await res.json();
         data.sort((a, b) => a.title.localeCompare(b.title));
         setBumpers(data);

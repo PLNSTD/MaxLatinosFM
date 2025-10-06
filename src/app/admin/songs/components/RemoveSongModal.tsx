@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface Song {
@@ -15,14 +16,14 @@ interface RemoveSongModalProps {
   onConfirm: (deletedSong: Song) => void;
 }
 
-// const API = "http://localhost:3001/songs/";
-const API = "https://maxlatinosfm-backend.onrender.com/songs/";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function RemoveSongModal({
   song,
   onClose,
   onConfirm,
 }: RemoveSongModalProps) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -36,7 +37,14 @@ export default function RemoveSongModal({
   const handleDelete = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}${song.id}`, { method: "DELETE" });
+      const res = await fetch(`${API}/songs/admin/${song.id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (res.status === 401) {
+        router.push("/admin/login"); // client-side redirect
+      }
 
       if (res.ok) {
         onConfirm(song);

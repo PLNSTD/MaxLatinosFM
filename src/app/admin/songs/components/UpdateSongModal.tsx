@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface Song {
@@ -15,13 +16,14 @@ interface UpdateSongModalProps {
   onUpdate: (updatedSong: Song) => void;
 }
 
-const API = "https://maxlatinosfm-backend.onrender.com/songs/";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function UpdateSongModal({
   song,
   onClose,
   onUpdate,
 }: UpdateSongModalProps) {
+  const router = useRouter();
   const [formData, setFormData] = useState<Song>({ ...song });
   const [loading, setLoading] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -49,11 +51,16 @@ export default function UpdateSongModal({
 
     setLoading(true);
     try {
-      const res = await fetch(`${API}${song.id}`, {
+      const res = await fetch(`${API}/songs/admin/${song.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
+
+      if (res.status === 401) {
+        router.push("/admin/login"); // client-side redirect
+      }
 
       if (res.ok) {
         const updatedSong = await res.json();

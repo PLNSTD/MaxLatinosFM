@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-//const API = "http://localhost:3001/songs/upload";
-const API = "https://maxlatinosfm-backend.onrender.com/songs/upload";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function UploadPage() {
   const router = useRouter();
-
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [duration, setDuration] = useState("");
@@ -17,6 +15,26 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Client-side auth check
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch(`${API}/auth/login/check`, {
+          method: "GET",
+          credentials: "include", // include cookies if API uses sessions
+        });
+        if (!res.ok) {
+          router.push("/admin/login");
+        } else {
+          setLoading(false);
+        }
+      } catch (err) {
+        router.push("/admin/login");
+      }
+    }
+    checkAuth();
+  }, [router]);
 
   const handleClick = () => fileInputRef.current?.click();
 
@@ -35,10 +53,16 @@ export default function UploadPage() {
     formData.append("artist", artist);
 
     try {
-      const res = await fetch(`${API}`, {
+      const res = await fetch(`${API}/songs/admin/upload`, {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
+
+      if (res.status === 401) {
+        router.push("/admin/login"); // client-side redirect
+      }
+
       const data = await res.json();
 
       if (res.ok) {
