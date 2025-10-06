@@ -86,6 +86,22 @@ const Player = () => {
     audioRef.current!.play().catch((err) => console.log("Play failed:", err));
   }, []);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+
+    return () => {
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+    };
+  }, [audioRef.current]);
+
   const getElapsed = () => {
     if (!startTime) return 0;
     return (Date.now() - startTime) / 1000 + delay!;
