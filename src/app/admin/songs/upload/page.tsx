@@ -59,7 +59,7 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-4">
+    <div className="text-[var(--color-dark)] min-h-screen flex items-center justify-center bg-[var(--color-dark)] p-4">
       <div className="bg-[var(--color-primary)] p-6 rounded-xl w-full max-w-md shadow-lg">
         {/* Back Button */}
         <button

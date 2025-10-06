@@ -19,7 +19,6 @@ export default function BumperList() {
       try {
         const res = await fetch(`${API}`);
         const data: Bumper[] = await res.json();
-        // Sort by title
         data.sort((a, b) => a.title.localeCompare(b.title));
         setBumpers(data);
       } catch (err) {
@@ -32,30 +31,32 @@ export default function BumperList() {
   }, []);
 
   if (loading)
-    return <p className="text-[var(--color-primary)]">Loading bumpers...</p>;
+    return (
+      <p className="text-[var(--color-primary)] text-center mt-10 animate-pulse">
+        Loading bumpers...
+      </p>
+    );
 
   return (
-    <div className="p-4 bg-[var(--color-bg)] min-h-screen">
-      <h1 className="text-3xl font-bold text-[var(--color-primary)] mb-4">
-        Bumper List
+    <div className="p-6 bg-[var(--color-dark)] min-h-screen">
+      <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-primary)] mb-6 text-center">
+        🎵 Bumper List
       </h1>
-      <ul className="space-y-2">
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {bumpers.map((bumper) => (
-          <li
+          <div
             key={bumper.id}
-            className="p-3 rounded-md shadow-md bg-[var(--color-secondary)] hover:bg-[var(--color-third)] transition-colors duration-300"
+            className="bg-[var(--color-bg)] rounded-2xl shadow-lg p-4 cursor-pointer
+                       hover:bg-[var(--color-third)] hover:scale-105 transition-all duration-300 ease-in-out"
           >
-            <span className="font-semibold text-[var(--color-primary)]">
-              ID:
-            </span>{" "}
-            {bumper.id} &nbsp;|&nbsp;
-            <span className="font-semibold text-[var(--color-primary)]">
-              Title:
-            </span>{" "}
-            {bumper.title}
-          </li>
+            <p className="text-sm text-black mb-2">ID: {bumper.id}</p>
+            <p className="font-semibold text-[var(--color-primary)] text-lg">
+              {bumper.title}
+            </p>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

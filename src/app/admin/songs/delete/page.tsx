@@ -59,9 +59,10 @@ export default function DeleteSongPage() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "var(--color-bg)",
+        backgroundColor: "var(--color-dark)",
         padding: "2rem",
       }}
+      className="text-[var(--color-dark)]"
     >
       <div
         style={{

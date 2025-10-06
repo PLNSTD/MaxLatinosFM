@@ -61,6 +61,12 @@ const Player = () => {
         audioRef.current.load();
       }
       console.log("Song Loaded!");
+
+      setIsPlaying(
+        audioRef.current
+          ? !audioRef.current.paused && !audioRef.current.ended
+          : false
+      );
     } catch (error: unknown) {
       const err = error as Error;
       if (err.name === "AbortError") {
